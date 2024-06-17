@@ -1,0 +1,6 @@
+@ControleRemessaModelo.API_HostAddress = http://localhost:5152
+
+GET {{ControleRemessaModelo.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
