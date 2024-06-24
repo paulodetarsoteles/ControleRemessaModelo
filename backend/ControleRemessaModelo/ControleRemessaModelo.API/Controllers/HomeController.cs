@@ -43,11 +43,7 @@ namespace ControleRemessaModelo.API.Controllers
 
                 if (string.IsNullOrEmpty(token))
                 {
-                    ErrorMessageResponseAPI erro = new()
-                    {
-                        ErrorCode = 204,
-                        ErrorMessage = ErrorMessages.None
-                    };
+                    ErrorMessageResponseAPI erro = new() { ErrorCode = 204, ErrorMessage = ErrorMessages.None };
 
                     responseAPI = new([erro], [], false, 204);
 
@@ -60,11 +56,7 @@ namespace ControleRemessaModelo.API.Controllers
             }
             catch (Exception ex)
             {
-                ErrorMessageResponseAPI erro = new()
-                {
-                    ErrorCode = 500,
-                    ErrorMessage = ex.Message
-                };
+                ErrorMessageResponseAPI erro = new() { ErrorCode = 500, ErrorMessage = ex.Message };
 
                 responseAPI.Errors.Add(erro);
 
