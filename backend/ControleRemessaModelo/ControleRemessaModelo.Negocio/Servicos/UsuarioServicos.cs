@@ -21,14 +21,16 @@ namespace ControleRemessaModelo.Negocio.Servicos
         {
             try
             {
-                UsuarioDTO resultado = new();
-                Usuario usuario = _usuarioRepositorio.GetUsuarioLogin(userName);
+                Usuario? usuario = _usuarioRepositorio.GetUsuarioLogin(userName);
 
-                resultado = _mapper.Map<UsuarioDTO>(usuario);
+                if (usuario is null)
+                    return null;
+
+                UsuarioDTO resultado = _mapper.Map<UsuarioDTO>(usuario);
 
                 return resultado;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }

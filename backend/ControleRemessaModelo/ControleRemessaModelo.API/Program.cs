@@ -1,4 +1,5 @@
 using ControleRemessaModelo.API.Injectors;
+using ControleRemessaModelo.Negocio.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -9,7 +10,7 @@ AutenticacaoInjector.Injector(builder);
 ServicoInjector.Injector(builder);
 RepositorioInjector.Injector(builder);
 
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(AutoMappings).Assembly);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

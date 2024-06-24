@@ -1,4 +1,5 @@
-﻿using ControleRemessaModelo.API.Responses;
+﻿using ControleRemessaModelo.API.Excecoes;
+using ControleRemessaModelo.API.Responses;
 using ControleRemessaModelo.API.Services;
 using ControleRemessaModelo.API.Utils;
 using ControleRemessaModelo.Negocio.DTOs;
@@ -38,26 +39,26 @@ namespace ControleRemessaModelo.API.Controllers
 
             try
             {
-                string token = _tokenServ.GenerateToken(login).ToString() ??
-                    string.Empty;
-
-                if (string.IsNullOrEmpty(token))
-                {
-                    ErrorMessageResponseAPI erro = new() { ErrorCode = 204, ErrorMessage = ErrorMessages.None };
-
-                    responseAPI = new([erro], [], false, 204);
-
-                    return Ok(responseAPI);
-                }
-
+                string token = _tokenServ.GenerateToken(login).ToString();
                 responseAPI = new(null, [new { token }], true, 200);
+
+                return Ok(responseAPI);
+            }
+            catch (CustomException ex)
+            {
+                ErrorMessageResponseAPI erro = new() { ErrorCode = 500, ErrorMessage = ex.Message };
+                erro.ErrorCode = (int)ex.ErrorCode;
+                erro.ErrorMessage = ErrorMessages.GetMessage(ex.ErrorCode);
+                responseAPI.Errors.Add(erro);
+                responseAPI.StatusCode = ErrorMessages.RetornarStatucCode(ex.ErrorCode);
 
                 return Ok(responseAPI);
             }
             catch (Exception ex)
             {
-                ErrorMessageResponseAPI erro = new() { ErrorCode = 500, ErrorMessage = ex.Message };
+                Console.WriteLine(ex.ToString());
 
+                ErrorMessageResponseAPI erro = new() { ErrorCode = 500, ErrorMessage = "Erro desconhecido." };
                 responseAPI.Errors.Add(erro);
 
                 return Ok(responseAPI);

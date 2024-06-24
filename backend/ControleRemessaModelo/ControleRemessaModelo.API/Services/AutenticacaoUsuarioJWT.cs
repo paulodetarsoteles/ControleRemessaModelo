@@ -1,4 +1,6 @@
-﻿using ControleRemessaModelo.API.Utils;
+﻿using ControleRemessaModelo.API.Enums;
+using ControleRemessaModelo.API.Excecoes;
+using ControleRemessaModelo.API.Utils;
 using ControleRemessaModelo.Negocio.DTOs;
 using ControleRemessaModelo.Negocio.Interfaces;
 using Microsoft.IdentityModel.Tokens;
@@ -14,19 +16,20 @@ namespace ControleRemessaModelo.API.Services
         {
             try
             {
-                UsuarioDTO usuario = usuarioServico.GetUsuarioLogin(user.UserName);
+                UsuarioDTO? usuario = usuarioServico.GetUsuarioLogin(user.UserName);
 
                 if (usuario is null)
-                    return ErrorMessages.UsuarioNaoEncontrado;
+                    throw new CustomException(ErrorCode.UsuarioNaoEncontrado);
 
-                if (usuario.UserName != user.UserName && usuario.Password != user.Password)
-                    return ErrorMessages.UsuarioOuSenhaInvalida;
+                if (usuario.UserName != user.UserName ||
+                    (usuario.UserName == user.UserName && usuario.Password != user.Password))
+                    throw new CustomException(ErrorCode.UsuarioOuSenhaInvalida);
 
                 string keySecret = "SecretKey";
                 char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret);
 
                 if (valueSecret is null)
-                    return ErrorMessages.ErroAoBuscarValorDaKey;
+                    throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(valueSecret));
 
@@ -34,10 +37,10 @@ namespace ControleRemessaModelo.API.Services
                 char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires);
 
                 if (valueExpires is null)
-                    return ErrorMessages.ErroAoBuscarValorDaKey;
+                    throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 if (!int.TryParse(valueExpires, out int expiresIn))
-                    return ErrorMessages.ErroAoConverterValorDaConfig;
+                    throw new CustomException(ErrorCode.ErroAoConverterValorDaConfig);
 
                 SigningCredentials signingCredentials = new(secretKey, SecurityAlgorithms.HmacSha256);
 
@@ -54,12 +57,18 @@ namespace ControleRemessaModelo.API.Services
 
                 string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
+                if (string.IsNullOrEmpty(token))
+                    throw new CustomException(ErrorCode.ProblemaNoServicoAutenticacao);
+
                 return token;
+            }
+            catch (CustomException ex)
+            {
+                throw ex;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                throw;
+                throw new Exception(ex.Message);
             }
         }
     }

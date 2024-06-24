@@ -1,19 +1,63 @@
-﻿namespace ControleRemessaModelo.API.Utils
+﻿using ControleRemessaModelo.API.Enums;
+
+namespace ControleRemessaModelo.API.Utils
 {
     public static class ErrorMessages
     {
-        //Autenticação
-        public const string None = "None";
-        public const string UsuarioNaoEncontrado = "Usuário não encontrado";
-        public const string UsuarioOuSenhaInvalida = "Usuário ou senha inválida";
-        public const string UsuarioBloqueado = "Usuário Bloqueado";
-        public const string UsuarioComPendencia = "Usuário com pendência";
-        public const string ProblemaNoServicoAutenticacao = "Problema no serviço de autenticação";
+        public static string GetMessage(ErrorCode errorCode)
+        {
+            return _errorMessages.TryGetValue(errorCode, out var message) ? message : "Erro desconhecido.";
+        }
 
-        //Arquivo de configuração
-        public const string ErroAoBuscarChaveNaConfiguracao = "Chave secreta não encontrada na configuração";
-        public const string ProblemaAoBuscarKeyNaConfig = "Problema ao buscar chave secreta na configuração";
-        public const string ErroAoBuscarValorDaKey = "Problema ao pegar valor da chave";
-        public const string ErroAoConverterValorDaConfig = "Erro ao converter valor da chave de expiração";
+        //MENSAGENS
+        private static readonly Dictionary<ErrorCode, string> _errorMessages = new Dictionary<ErrorCode, string>
+        {
+            //Autenticação
+            { ErrorCode.None, "None" },
+            { ErrorCode.UsuarioNaoEncontrado, "Usuário não encontrado." },
+            { ErrorCode.UsuarioOuSenhaInvalida, "Usuário ou senha inválida." },
+            { ErrorCode.UsuarioBloqueado, "Usuário Bloqueado." },
+            { ErrorCode.UsuarioComPendencia, "Usuário com pendência." },
+            { ErrorCode.ProblemaNoServicoAutenticacao, "Problema no serviço de autenticação." },
+
+            //Arquivo de configuração
+            { ErrorCode.ErroAoBuscarChaveNaConfiguracao, "Chave secreta não encontrada na configuração." },
+            { ErrorCode.ProblemaAoBuscarKeyNaConfig, "Problema ao buscar chave secreta na configuração." },
+            { ErrorCode.ErroAoBuscarValorDaKey, "Problema ao pegar valor da chave." },
+            { ErrorCode.ErroAoConverterValorDaConfig, "Erro ao converter valor da chave de expiração." }
+        };
+
+        public static int RetornarStatucCode(ErrorCode ErroAutenticacao)
+        {
+            int resultado = 0;
+
+            switch (ErroAutenticacao)
+            {
+                case ErrorCode.UsuarioNaoEncontrado:
+                    resultado = 404;
+                    break;
+
+                case ErrorCode.UsuarioOuSenhaInvalida:
+                case ErrorCode.UsuarioBloqueado:
+                case ErrorCode.UsuarioComPendencia:
+                    resultado = 401;
+                    break;
+
+                case ErrorCode.ProblemaNoServicoAutenticacao:
+                case ErrorCode.ErroAoBuscarChaveNaConfiguracao:
+                case ErrorCode.ProblemaAoBuscarKeyNaConfig:
+                case ErrorCode.ErroAoBuscarValorDaKey:
+                case ErrorCode.ErroAoConverterValorDaConfig:
+                    resultado = 500;
+                    break;
+
+                case ErrorCode.None:
+                    break;
+                default:
+                    break;
+            }
+
+            return resultado;
+        }
     }
 }

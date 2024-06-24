@@ -99,13 +99,16 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
         {
             Usuario resultado = new()
             {
-                UserName = userName,
-                Password = "",
-                Nome = "Teste Ok",
+                UserName = "paulo",
+                Password = "Paulo@123",
+                Nome = "Paulo de Tarso",
                 Role = "admin",
-                Email = "teste@teste.com",
+                Email = "paulo@teste.com",
                 Telefone = "85991672946"
             };
+
+            if (string.IsNullOrEmpty(userName) || userName != resultado.UserName)
+                return null;
 
             return resultado;
         }
