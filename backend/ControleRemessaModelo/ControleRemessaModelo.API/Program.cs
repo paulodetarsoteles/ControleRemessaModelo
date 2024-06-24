@@ -1,10 +1,15 @@
-using ControleRemessaModelo.API.Services;
+using ControleRemessaModelo.API.Injectors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+AutenticacaoInjector.Injector(builder);
+ServicoInjector.Injector(builder);
+RepositorioInjector.Injector(builder);
+
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,11 +26,12 @@ builder.Services.AddAuthentication(x =>
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AutenticacaoUsuarioJWT.Secret())),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(ControleRemessaModelo.API.Utils.ConfigurationFile.GetConfigurationKey("SecretKey"))),
         ValidateIssuer = false,
         ValidateAudience = false
     };
 });
+
 
 var app = builder.Build();
 
@@ -36,10 +42,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.UseCors(option => option.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());

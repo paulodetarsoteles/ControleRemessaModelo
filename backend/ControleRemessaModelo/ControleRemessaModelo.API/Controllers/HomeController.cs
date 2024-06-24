@@ -1,5 +1,8 @@
-﻿using ControleRemessaModelo.API.Services;
-using ControleRemessaModelo.API.ViewModels;
+﻿using ControleRemessaModelo.API.Responses;
+using ControleRemessaModelo.API.Services;
+using ControleRemessaModelo.API.Utils;
+using ControleRemessaModelo.Negocio.DTOs;
+using ControleRemessaModelo.Negocio.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,23 +12,67 @@ namespace ControleRemessaModelo.API.Controllers
     [Route("api/[controller]")]
     public class HomeController : ControllerBase
     {
+        private readonly IAutenticacaoUsuarioJWT _tokenServ;
+        private readonly IUsuarioServico _usuarioServico;
+
+        public HomeController(IAutenticacaoUsuarioJWT tokenServ, IUsuarioServico usuarioServico)
+        {
+            _tokenServ = tokenServ;
+            _usuarioServico = usuarioServico;
+        }
+
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            return Ok("Api funcionando.");
+            //TODO: Implementar para salvar as requisicoes no MongoDB
+            DefaultResponseAPI responseAPI = new(null, [new { message = "API funcionando!" }], true, 200);
+
+            return Ok(responseAPI);
         }
 
         [HttpPost("login")]
-        [AllowAnonymous]
-        public IActionResult Login([FromBody] UserLoginViewModel login)
+        public IActionResult Login([FromBody] UsuarioLoginDTO login)
         {
-            if (login.UserName != "usuario" && login.Password != "senha")
-                return Unauthorized();
+            //TODO: Implementar para salvar as requisicoes no MongoDB
+            DefaultResponseAPI responseAPI = new();
 
-            string token = AutenticacaoUsuarioJWT.GenerateJwtToken(login.UserName);
+            try
+            {
+                //Encapsular para um métdo de serviço de autenticação e validar o usuario e o password
 
-            return Ok(new { token });
+                string token = _tokenServ.GenerateToken(login).ToString() ??
+                    string.Empty;
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    ErrorMessageResponseAPI erro = new()
+                    {
+                        ErrorCode = 204,
+                        ErrorMessage = ErrorMessages.None
+                    };
+
+                    responseAPI = new([erro], [], false, 204);
+
+                    return Ok(responseAPI);
+                }
+
+                responseAPI = new(null, [new { token }], true, 200);
+
+                return Ok(responseAPI);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessageResponseAPI erro = new()
+                {
+                    ErrorCode = 500,
+                    ErrorMessage = ex.Message
+                };
+
+                responseAPI.Errors.Add(erro);
+
+                return Ok(responseAPI);
+            }
         }
     }
 }

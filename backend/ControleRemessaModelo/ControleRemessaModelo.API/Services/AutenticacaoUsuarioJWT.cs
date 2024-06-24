@@ -1,46 +1,66 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ControleRemessaModelo.API.Utils;
+using ControleRemessaModelo.Negocio.DTOs;
+using ControleRemessaModelo.Negocio.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace ControleRemessaModelo.API.Services
 {
-    public class AutenticacaoUsuarioJWT
+    public class AutenticacaoUsuarioJWT(IUsuarioServico usuarioServico) : IAutenticacaoUsuarioJWT
     {
-        private readonly static IConfiguration configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
-
-        public static char[] Secret()
+        public string GenerateToken(UsuarioLoginDTO user)
         {
-            string secretKey = configuration["SecretKey"] ??
-                throw new Exception("Chave sereta não encontrada no arquivo de configuração.");
-
-            if (string.IsNullOrEmpty(secretKey))
-                throw new Exception("Problema ao buscar chave secreta na configuração");
-
-            return secretKey.ToCharArray();
-        }
-
-        internal static string GenerateJwtToken(string username)
-        {
-            JwtSecurityTokenHandler tokenHandler = new();
-
-            byte[]? key = Encoding.ASCII.GetBytes(Secret());
-
-            SecurityTokenDescriptor? tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(
-                [
-                    new(ClaimTypes.Name, username)
-                ]),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
+                UsuarioDTO usuario = usuarioServico.GetUsuarioLogin(user.UserName);
 
-            SecurityToken? token = tokenHandler.CreateToken(tokenDescriptor);
+                if (usuario is null)
+                    return ErrorMessages.UsuarioNaoEncontrado;
 
-            return tokenHandler.WriteToken(token);
+                if (usuario.UserName != user.UserName && usuario.Password != user.Password)
+                    return ErrorMessages.UsuarioOuSenhaInvalida;
+
+                string keySecret = "SecretKey";
+                char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret);
+
+                if (valueSecret is null)
+                    return ErrorMessages.ErroAoBuscarValorDaKey;
+
+                SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(valueSecret));
+
+                string keyExpires = "ExpiresTokenInHour";
+                char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires);
+
+                if (valueExpires is null)
+                    return ErrorMessages.ErroAoBuscarValorDaKey;
+
+                if (!int.TryParse(valueExpires, out int expiresIn))
+                    return ErrorMessages.ErroAoConverterValorDaConfig;
+
+                SigningCredentials signingCredentials = new(secretKey, SecurityAlgorithms.HmacSha256);
+
+                JwtSecurityToken tokenOptions = new
+                (
+                    claims:
+                    [
+                        new Claim(ClaimTypes.Name, usuario.Nome),
+                        new Claim(ClaimTypes.Role, usuario.Role)
+                    ],
+                    expires: DateTime.Now.AddHours(expiresIn),
+                    signingCredentials: signingCredentials
+                );
+
+                string token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+                return token;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

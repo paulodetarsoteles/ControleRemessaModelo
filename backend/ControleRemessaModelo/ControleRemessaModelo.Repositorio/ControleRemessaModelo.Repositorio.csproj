@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ControleRemessaModelo.Entidades\ControleRemessaModelo.Entidades.csproj" />
+  </ItemGroup>
+
 </Project>

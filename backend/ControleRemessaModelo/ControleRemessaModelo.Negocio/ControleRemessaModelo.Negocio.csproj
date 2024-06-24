@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ControleRemessaModelo.Entidades\ControleRemessaModelo.Entidades.csproj" />
+    <ProjectReference Include="..\ControleRemessaModelo.Repositorio\ControleRemessaModelo.Repositorio.csproj" />
+  </ItemGroup>
+
 </Project>

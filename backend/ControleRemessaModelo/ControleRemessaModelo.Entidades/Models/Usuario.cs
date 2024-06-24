@@ -1,7 +1,8 @@
-﻿namespace ControleRemessaModelo.API.ViewModels
+﻿namespace ControleRemessaModelo.Entidades.Models
 {
-    public class UserLoginViewModel
+    public class Usuario
     {
+        public int Id { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Nome { get; set; } = string.Empty;
