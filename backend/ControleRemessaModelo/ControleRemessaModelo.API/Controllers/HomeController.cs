@@ -34,13 +34,10 @@ namespace ControleRemessaModelo.API.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] UsuarioLoginDTO login)
         {
-            //TODO: Implementar para salvar as requisicoes no MongoDB
             DefaultResponseAPI responseAPI = new();
 
             try
             {
-                //Encapsular para um métdo de serviço de autenticação e validar o usuario e o password
-
                 string token = _tokenServ.GenerateToken(login).ToString() ??
                     string.Empty;
 
