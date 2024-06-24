@@ -17,7 +17,7 @@ namespace ControleRemessaModelo.Negocio.Servicos
             _usuarioRepositorio = usuarioRepositorio;
         }
 
-        public UsuarioDTO GetUsuarioLogin(string userName)
+        public UsuarioDTO? GetUsuarioLogin(string userName)
         {
             try
             {
@@ -30,7 +30,7 @@ namespace ControleRemessaModelo.Negocio.Servicos
 
                 return resultado;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

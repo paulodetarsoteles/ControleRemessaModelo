@@ -12,6 +12,6 @@ namespace ControleRemessaModelo.Repositorio.Interfaces
         int Delete(int id);
 
         // Teste de Login
-        Usuario GetUsuarioLogin(string userName);
+        Usuario? GetUsuarioLogin(string userName);
     }
 }

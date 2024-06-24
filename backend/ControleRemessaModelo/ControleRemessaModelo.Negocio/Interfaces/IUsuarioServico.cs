@@ -4,6 +4,6 @@ namespace ControleRemessaModelo.Negocio.Interfaces
 {
     public interface IUsuarioServico
     {
-        UsuarioDTO GetUsuarioLogin(string userName);
+        UsuarioDTO? GetUsuarioLogin(string userName);
     }
 }

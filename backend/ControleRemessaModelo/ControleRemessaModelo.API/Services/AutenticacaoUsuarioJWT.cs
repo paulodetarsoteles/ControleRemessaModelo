@@ -62,9 +62,9 @@ namespace ControleRemessaModelo.API.Services
 
                 return token;
             }
-            catch (CustomException ex)
+            catch (CustomException)
             {
-                throw ex;
+                throw;
             }
             catch (Exception ex)
             {

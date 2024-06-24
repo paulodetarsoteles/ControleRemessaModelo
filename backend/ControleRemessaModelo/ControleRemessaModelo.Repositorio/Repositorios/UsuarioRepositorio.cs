@@ -95,7 +95,7 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
         }
 
         // Teste de Login
-        public Usuario GetUsuarioLogin(string userName)
+        public Usuario? GetUsuarioLogin(string userName)
         {
             Usuario resultado = new()
             {
