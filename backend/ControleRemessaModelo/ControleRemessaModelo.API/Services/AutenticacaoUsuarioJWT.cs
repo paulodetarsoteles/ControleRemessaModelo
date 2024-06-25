@@ -21,8 +21,7 @@ namespace ControleRemessaModelo.API.Services
                 if (usuario is null)
                     throw new CustomException(ErrorCode.UsuarioNaoEncontrado);
 
-                if (usuario.UserName != user.UserName ||
-                    (usuario.UserName == user.UserName && usuario.Password != user.Password))
+                if (usuario.UserName != user.UserName || usuario.Password != user.Password)
                     throw new CustomException(ErrorCode.UsuarioOuSenhaInvalida);
 
                 string keySecret = "SecretKey";
