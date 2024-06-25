@@ -1,5 +1,6 @@
 ﻿using ControleRemessaModelo.API.Excecoes;
 using ControleRemessaModelo.API.Responses;
+using ControleRemessaModelo.API.Responses.Home;
 using ControleRemessaModelo.API.Services;
 using ControleRemessaModelo.API.Utils;
 using ControleRemessaModelo.Negocio.DTOs;
@@ -22,17 +23,27 @@ namespace ControleRemessaModelo.API.Controllers
             _usuarioServico = usuarioServico;
         }
 
-        [HttpGet]
+        [HttpGet("index")]
         [AllowAnonymous]
         public IActionResult Index()
         {
             //TODO: Implementar para salvar as requisicoes no MongoDB
-            DefaultResponseAPI responseAPI = new(null, [new { message = "API funcionando!" }], true, 200);
+            IndexResponse response = new();
+            DefaultResponseAPI responseAPI = new(null, [response], true, 200);
+            return Ok(responseAPI);
+        }
 
+        [HttpGet("health")]
+        [Authorize(Roles = "admin")]
+        public IActionResult Health()
+        {
+            HealthResponse response = new() { Authorization = true, HealthCheck = true };
+            DefaultResponseAPI responseAPI = new(null, [response], true, 200);
             return Ok(responseAPI);
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public IActionResult Login([FromBody] UsuarioLoginDTO login)
         {
             DefaultResponseAPI responseAPI = new();
