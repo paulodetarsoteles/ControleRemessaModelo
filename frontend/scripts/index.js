@@ -1,70 +1,45 @@
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Evita o envio padrão do formulário
+document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-    var username = document.getElementById('username').value;
-    var password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-    // Cria uma nova instância de XMLHttpRequest
-    var xhr = new XMLHttpRequest();
-
-    // Configura a requisição para o método POST e o endpoint de login
-    xhr.open("POST", "http://localhost:5152/api/home/login", true);
-
-    // Define o header Content-Type
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-    // Define a função a ser executada quando a resposta for recebida
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                // Sucesso na resposta do servidor
-                var response = JSON.parse(xhr.responseText);
-                var token = response.token;
-
-                alert("Login bem-sucedido!");
-
-                // Aqui você pode salvar o token para uso futuro
-                localStorage.setItem('jwtToken', token);
-            } else {
-                // Erro na resposta do servidor
-                console.error("Erro: ", xhr.statusText);
-                alert("Falha no login!");
-            }
-        }
-    };
-
-    // Prepara o corpo da requisição com as credenciais do usuário
-    var data = JSON.stringify({
-        UserName: username,
-        Password: password
-    });
-
-    // Envia a requisição com o corpo
-    xhr.send(data);
-});
-
-// Exemplo de função para fazer uma requisição autenticada
-function fetchData() {
-    var token = localStorage.getItem('jwtToken');
-
-    if (!token) {
-        alert("Você precisa fazer login primeiro!");
+    if (!username || !password) {
+        alert("Username e Password são obrigatórios!");
         return;
     }
 
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:5152/api/home/index", true);
-    xhr.setRequestHeader("Authorization", "Bearer " + token);
+    try {
+        const response = await fetch("https://localhost:7117/api/home/login", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ UserName: username, Password: password })
+        });
 
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                console.log("Dados recebidos: ", xhr.responseText);
-            } else {
-                console.error("Erro: ", xhr.statusText);
-            }
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            const token = data.bodyResponse[0].token; 
+
+            alert("Login bem-sucedido!");
+
+            setCookie('jwtToken', token, 1); // Exemplo: 1 dia de validade
+
+            window.location.href = 'pages/home.html';
+        } else {
+            const errorMessage = data.errors && data.errors.length > 0 ? data.errors[0].errorMessage : "Erro desconhecido";
+            alert(`Falha no login: ${errorMessage} (Status: ${data.statusCode})`);
         }
-    };
+    } catch (error) {
+        console.error("Erro:", error);
+        alert("Erro no login! Verifique a conexão e tente novamente.");
+    }
+});
 
-    xhr.send();
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = `expires=${date.toUTCString()}`;
+    const cookieOptions = `${name}=${value}; ${expires}; Secure; SameSite=Strict`;
+    document.cookie = cookieOptions;
 }

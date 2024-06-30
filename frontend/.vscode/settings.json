@@ -1,0 +1,11 @@
+{
+    "liveServer.settings.port": 5501,
+    "liveServer.settings.CustomBrowser": "chrome",
+    // "liveServer.settings.root": "C:/",
+    "liveServer.settings.https": {
+        "enable": true,
+        "cert": "C:\\...\\ControleRemessaModelo\\frontend\\helper\\localhost.pem",
+        "key": "C:\\...\\ControleRemessaModelo\\frontend\\helper\\localhost.key",
+        "passphrase": "..."
+    }
+}
