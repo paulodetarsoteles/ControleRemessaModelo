@@ -1,0 +1,6 @@
+SCRIPT SQLITE: 
+
+--Entrar no Sqlite
+sqlite3 dbcontroleremessamodelo.db
+
+Na pasta de scripts contem os scripts que foram usados nas criações das tabelas e inserção de dados manuais. 
