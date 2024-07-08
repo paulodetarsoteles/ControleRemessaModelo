@@ -4,7 +4,6 @@ using ControleRemessaModelo.Repositorio.Interfaces;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Options;
 using System.Data;
-using System.Xml;
 
 namespace ControleRemessaModelo.Repositorio.Repositorios
 {

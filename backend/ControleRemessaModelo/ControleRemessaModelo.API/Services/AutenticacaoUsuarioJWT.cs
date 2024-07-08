@@ -25,14 +25,14 @@ namespace ControleRemessaModelo.API.Services
 
                 string keySecret = "SecretKey";
 
-                char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret) ?? 
+                char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret) ??
                     throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(valueSecret));
 
                 string keyExpires = "ExpiresTokenInHour";
 
-                char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires) ?? 
+                char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires) ??
                     throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 if (!int.TryParse(valueExpires, out int expiresIn))
