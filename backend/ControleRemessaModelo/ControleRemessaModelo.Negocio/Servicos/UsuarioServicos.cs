@@ -21,7 +21,7 @@ namespace ControleRemessaModelo.Negocio.Servicos
         {
             try
             {
-                Usuario? usuario = _usuarioRepositorio.GetUsuarioLogin(userName);
+                Usuario? usuario = _usuarioRepositorio.BuscarPorLogin(userName);
 
                 if (usuario is null)
                     return null;

@@ -1,12 +1,16 @@
 using ControleRemessaModelo.API.Injectors;
 using ControleRemessaModelo.API.Utils;
 using ControleRemessaModelo.Negocio.Helpers;
+using ControleRemessaModelo.Repositorio.DataConnection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SQLitePCL;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Batteries.Init();
 
 #region Injeções de Dependência
 AutenticacaoInjector.Injector(builder);
@@ -17,9 +21,11 @@ RepositorioInjector.Injector(builder);
 builder.Services.AddAutoMapper(typeof(AutoMappings).Assembly);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<ConnectionSetting>(builder.Configuration.GetSection("ConnectionStrings"));
 
 builder.Services.AddSwaggerGen(options =>
 {
+    options.EnableAnnotations();
 
     options.SwaggerDoc("v1", new OpenApiInfo
     {

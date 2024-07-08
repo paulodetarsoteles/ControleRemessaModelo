@@ -4,14 +4,12 @@ namespace ControleRemessaModelo.Repositorio.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        List<Usuario> GetAll();
-        Usuario GetById(int id);
-        Usuario GetByUserName(string userName);
-        bool Insert(Usuario usuario);
-        int Update(Usuario usuario);
-        int Delete(int id);
-
-        // Teste de Login
-        Usuario? GetUsuarioLogin(string userName);
+        List<Usuario> Buscar();
+        Usuario BuscarPorId(int id);
+        Usuario BuscarPorNome(string userName);
+        Usuario? BuscarPorLogin(string login);
+        bool Inserir(Usuario usuario);
+        int Atualizar(Usuario usuario);
+        int Excluir(int id);
     }
 }

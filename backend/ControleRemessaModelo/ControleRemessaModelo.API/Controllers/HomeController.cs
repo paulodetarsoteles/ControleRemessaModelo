@@ -7,6 +7,7 @@ using ControleRemessaModelo.Negocio.DTOs;
 using ControleRemessaModelo.Negocio.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ControleRemessaModelo.API.Controllers
 {
@@ -23,6 +24,7 @@ namespace ControleRemessaModelo.API.Controllers
             _usuarioServico = usuarioServico;
         }
 
+        [SwaggerOperation(Summary = "Verifica se a API está funcionando")]
         [HttpGet("index")]
         [AllowAnonymous]
         public IActionResult Index()
@@ -33,6 +35,7 @@ namespace ControleRemessaModelo.API.Controllers
             return Ok(responseAPI);
         }
 
+        [SwaggerOperation(Summary = "Verifica aenas se o usuário admin está sendo validado")]
         [HttpGet("health")]
         [Authorize(Roles = "admin")]
         public IActionResult Health()
@@ -42,11 +45,13 @@ namespace ControleRemessaModelo.API.Controllers
             return Ok(responseAPI);
         }
 
+        [SwaggerOperation(Summary = "Faz o login no sistema (retorna o token)")]
         [HttpPost("login")]
         [AllowAnonymous]
         public IActionResult Login([FromBody] UsuarioLoginDTO login)
         {
             DefaultResponseAPI responseAPI = new();
+            login.Senha = _tokenServ.GetHashMd5(login.Senha);
 
             try
             {

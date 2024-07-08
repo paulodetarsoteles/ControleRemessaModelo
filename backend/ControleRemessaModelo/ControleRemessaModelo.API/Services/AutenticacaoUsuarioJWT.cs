@@ -6,6 +6,7 @@ using ControleRemessaModelo.Negocio.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ControleRemessaModelo.API.Services
@@ -16,26 +17,22 @@ namespace ControleRemessaModelo.API.Services
         {
             try
             {
-                UsuarioDTO? usuario = usuarioServico.GetUsuarioLogin(user.UserName);
-
-                if (usuario is null)
+                UsuarioDTO? usuario = usuarioServico.GetUsuarioLogin(user.Login) ??
                     throw new CustomException(ErrorCode.UsuarioNaoEncontrado);
 
-                if (usuario.UserName != user.UserName || usuario.Password != user.Password)
+                if (usuario.Login != user.Login || usuario.Senha != user.Senha)
                     throw new CustomException(ErrorCode.UsuarioOuSenhaInvalida);
 
                 string keySecret = "SecretKey";
-                char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret);
 
-                if (valueSecret is null)
+                char[] valueSecret = ConfigurationFile.GetConfigurationKey(keySecret) ?? 
                     throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(valueSecret));
 
                 string keyExpires = "ExpiresTokenInHour";
-                char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires);
 
-                if (valueExpires is null)
+                char[] valueExpires = ConfigurationFile.GetConfigurationKey(keyExpires) ?? 
                     throw new CustomException(ErrorCode.ErroAoBuscarValorDaKey);
 
                 if (!int.TryParse(valueExpires, out int expiresIn))
@@ -69,6 +66,17 @@ namespace ControleRemessaModelo.API.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public string GetHashMd5(string input)
+        {
+            byte[] data = MD5.HashData(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new();
+
+            for (int i = 0; i < data.Length; i++)
+                sBuilder.Append(data[i].ToString("x2"));
+
+            return sBuilder.ToString();
         }
     }
 }
