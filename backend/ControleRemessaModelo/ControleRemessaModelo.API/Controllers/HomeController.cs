@@ -33,7 +33,6 @@ namespace ControleRemessaModelo.API.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            //TODO: Implementar para salvar as requisicoes no MongoDB
             IndexResponse response = new();
             DefaultResponseAPI responseAPI = new(null, [response], true, 200);
             return Ok(responseAPI);
