@@ -5,12 +5,15 @@ using ControleRemessaModelo.Repositorio.DataConnection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using SQLitePCL;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region SQLite
 Batteries.Init();
+#endregion
 
 #region Injeções de Dependência
 AutenticacaoInjector.Injector(builder);
@@ -18,11 +21,22 @@ ServicoInjector.Injector(builder);
 RepositorioInjector.Injector(builder);
 #endregion
 
+#region Configuração dos Logs (Serilog))
+var logger = new LoggerConfiguration()
+        .MinimumLevel.Error()
+        .WriteTo.File("Logs/log-api.txt", rollingInterval: RollingInterval.Day)
+        .CreateLogger();
+
+//builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+#endregion
+
 builder.Services.AddAutoMapper(typeof(AutoMappings).Assembly);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.Configure<ConnectionSetting>(builder.Configuration.GetSection("ConnectionStrings"));
 
+#region Swagger
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
@@ -61,7 +75,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 
 });
+#endregion
 
+#region Autenticação JWT
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,6 +95,7 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false
     };
 });
+#endregion
 
 
 var app = builder.Build();

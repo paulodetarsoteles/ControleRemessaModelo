@@ -8,6 +8,8 @@ using ControleRemessaModelo.Negocio.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace ControleRemessaModelo.API.Controllers
 {
@@ -15,11 +17,13 @@ namespace ControleRemessaModelo.API.Controllers
     [Route("api/[controller]")]
     public class HomeController : ControllerBase
     {
+        private readonly ILogger<HomeController> _logger;
         private readonly IAutenticacaoUsuarioJWT _tokenServ;
         private readonly IUsuarioServico _usuarioServico;
 
-        public HomeController(IAutenticacaoUsuarioJWT tokenServ, IUsuarioServico usuarioServico)
+        public HomeController(ILogger<HomeController> logger, IAutenticacaoUsuarioJWT tokenServ, IUsuarioServico usuarioServico)
         {
+            _logger = logger;
             _tokenServ = tokenServ;
             _usuarioServico = usuarioServico;
         }
@@ -72,7 +76,7 @@ namespace ControleRemessaModelo.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                _logger.LogError($"{TypeDescriptor.GetClassName(this)} - {nameof(MethodBase)} - {ex.Message} - {ex.StackTrace}", "ERRO");
 
                 ErrorMessageResponseAPI erro = new() { ErrorCode = 500, ErrorMessage = "Erro desconhecido." };
                 responseAPI.Errors.Add(erro);
