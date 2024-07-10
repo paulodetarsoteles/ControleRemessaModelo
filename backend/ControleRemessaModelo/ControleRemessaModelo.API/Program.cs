@@ -1,10 +1,12 @@
 using ControleRemessaModelo.API.Injectors;
+using ControleRemessaModelo.API.Services;
 using ControleRemessaModelo.API.Utils;
 using ControleRemessaModelo.Negocio.Helpers;
 using ControleRemessaModelo.Repositorio.DataConnection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using Serilog;
 using SQLitePCL;
 using System.Text;
@@ -97,6 +99,13 @@ builder.Services.AddAuthentication(x =>
 });
 #endregion
 
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetConnectionString("MongoDb");
+    return new MongoClient(connectionString);
+});
+
 
 var app = builder.Build();
 
@@ -111,6 +120,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
 app.MapControllers();
 
 app.UseCors(option => option.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
