@@ -45,7 +45,7 @@ namespace ControleRemessaModelo.API.Services
                     claims:
                     [
                         new Claim(ClaimTypes.Name, usuario.Nome),
-                        new Claim(ClaimTypes.Role, usuario.Role)
+                        new Claim(ClaimTypes.Role, usuario.Role.Nome)
                     ],
                     expires: DateTime.Now.AddHours(expiresIn),
                     signingCredentials: signingCredentials

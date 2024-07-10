@@ -8,6 +8,7 @@ namespace ControleRemessaModelo.API.Injectors
         public static void Injector(WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<IUsuarioServico, UsuarioServicos>();
+            builder.Services.AddScoped<IRoleServico, RoleServico>();
         }
     }
 }

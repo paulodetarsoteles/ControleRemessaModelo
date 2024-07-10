@@ -10,6 +10,9 @@ namespace ControleRemessaModelo.Negocio.Helpers
         {
             CreateMap<UsuarioDTO, Usuario>();
             CreateMap<Usuario, UsuarioDTO>();
+
+            CreateMap<RoleDTO, Role>();
+            CreateMap<Role, RoleDTO>();
         }
     }
 }
