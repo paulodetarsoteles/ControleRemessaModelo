@@ -97,14 +97,14 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
             {
                 connection.Open();
 
-                string sql = @"SELECT 
-                                   u.Id, u.Login, u.Senha, u.Nome, u.Role, u.Email, u.Telefone 
-                               FROM 
-                                   tb_Usuarios AS u 
-                               WHERE 1 = 1  
-                                   AND u.Login LIKE @Login 
-                               ORDER BY 1 DESC 
-                               LIMIT 1; ";
+                string sql = @" SELECT 
+                                    u.Id, u.Login, u.Senha, u.Nome, u.Email, u.Telefone, u.Roles_Id 
+                                FROM tb_Usuarios AS u 
+                                WHERE 1 = 1 
+                                    AND u.Login LIKE @Login
+                                ORDER BY 1 DESC
+                                LIMIT 10; 
+                            ";
 
                 SqliteCommand command = new(sql, connection);
 
@@ -121,11 +121,11 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                     resultado.Login = reader.GetString(1);
                     resultado.Senha = reader.GetString(2);
                     resultado.Nome = reader.GetString(3);
-                    resultado.Role = reader.GetString(4);
-                    resultado.Email = reader.GetString(5);
+                    resultado.Email = reader.GetString(4);
+                    resultado.Role_Id = reader.GetString(6);
 
-                    if (!reader.IsDBNull(6))
-                        resultado.Telefone = reader.GetString(6);
+                    if (!reader.IsDBNull(5))
+                        resultado.Telefone = reader.GetString(5);
                 }
             }
             catch (Exception ex)
