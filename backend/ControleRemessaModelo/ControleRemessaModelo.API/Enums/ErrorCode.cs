@@ -2,7 +2,7 @@
 {
     public enum ErrorCode
     {
-        None = 0,
+        ErroInesperado = 0,
         UsuarioNaoEncontrado = 1,
         UsuarioOuSenhaInvalida = 2,
         UsuarioBloqueado = 3,

@@ -35,7 +35,9 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 using var reader = command.ExecuteReader();
 
                 if (!reader.HasRows)
+                {
                     return null;
+                }
 
                 while (reader.Read())
                 {

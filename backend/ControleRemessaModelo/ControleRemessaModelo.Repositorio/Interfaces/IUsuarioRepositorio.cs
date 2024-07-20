@@ -4,7 +4,7 @@ namespace ControleRemessaModelo.Repositorio.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        List<Usuario> Buscar();
+        List<Usuario>? Buscar();
         Usuario BuscarPorId(int id);
         Usuario BuscarPorNome(string userName);
         Usuario? BuscarPorLogin(string login);

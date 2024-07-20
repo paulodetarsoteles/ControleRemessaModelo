@@ -1,5 +1,4 @@
 ﻿using ControleRemessaModelo.API.Enums;
-using ControleRemessaModelo.API.Excecoes;
 
 namespace ControleRemessaModelo.API.Utils
 {
@@ -12,10 +11,12 @@ namespace ControleRemessaModelo.API.Utils
         public static char[] GetConfigurationKey(string key)
         {
             string secretKey = configuration[key] ??
-                throw new CustomException(ErrorCode.ErroAoBuscarChaveNaConfiguracao);
+                throw new Exception(ErrorMessages.GetMessage(ErrorCode.ErroAoBuscarChaveNaConfiguracao));
 
             if (string.IsNullOrEmpty(secretKey))
-                throw new CustomException(ErrorCode.ProblemaAoBuscarKeyNaConfig);
+            {
+                throw new Exception(ErrorMessages.GetMessage(ErrorCode.ProblemaAoBuscarKeyNaConfig));
+            }
 
             return secretKey.ToCharArray();
         }

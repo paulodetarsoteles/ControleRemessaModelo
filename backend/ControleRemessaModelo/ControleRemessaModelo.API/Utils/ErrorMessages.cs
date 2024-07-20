@@ -13,7 +13,7 @@ namespace ControleRemessaModelo.API.Utils
         private static readonly Dictionary<ErrorCode, string> _errorMessages = new Dictionary<ErrorCode, string>
         {
             //Autenticação
-            { ErrorCode.None, "None" },
+            { ErrorCode.ErroInesperado, "Ocorreu um problema inesperado." },
             { ErrorCode.UsuarioNaoEncontrado, "Usuário não encontrado." },
             { ErrorCode.UsuarioOuSenhaInvalida, "Usuário ou senha inválida." },
             { ErrorCode.UsuarioBloqueado, "Usuário Bloqueado." },
@@ -51,7 +51,7 @@ namespace ControleRemessaModelo.API.Utils
                     resultado = 500;
                     break;
 
-                case ErrorCode.None:
+                case ErrorCode.ErroInesperado:
                     break;
                 default:
                     break;

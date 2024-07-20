@@ -1,4 +1,4 @@
-﻿namespace ControleRemessaModelo.API.Responses
+﻿namespace ControleRemessaModelo.Negocio.Responses
 {
     public class DefaultResponseAPI
     {

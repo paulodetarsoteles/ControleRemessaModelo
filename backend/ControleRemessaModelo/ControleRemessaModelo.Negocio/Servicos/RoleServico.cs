@@ -27,9 +27,11 @@ namespace ControleRemessaModelo.Negocio.Servicos
                 List<Role>? roles = _roleRepositorio.Buscar();
 
                 if (roles is null || roles.Count == 0)
+                {
                     return null;
+                }
 
-                List<RoleDTO> resultado = new();
+                List<RoleDTO> resultado = [];
 
                 foreach (Role role in roles)
                 {

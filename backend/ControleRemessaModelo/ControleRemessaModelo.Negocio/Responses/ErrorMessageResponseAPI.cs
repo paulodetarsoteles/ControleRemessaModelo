@@ -1,8 +1,7 @@
-﻿namespace ControleRemessaModelo.API.Responses
+﻿namespace ControleRemessaModelo.Negocio.Responses
 {
     public class ErrorMessageResponseAPI
     {
-        public int ErrorCode { get; set; }
         public string ErrorMessage { get; set; } = string.Empty;
     }
 }

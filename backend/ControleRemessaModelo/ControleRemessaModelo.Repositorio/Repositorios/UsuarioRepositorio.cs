@@ -13,16 +13,52 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
 
         public UsuarioRepositorio(IOptions<ConnectionSetting> connection) => _connection = connection.Value;
 
-        public List<Usuario> Buscar()
+        public List<Usuario>? Buscar()
         {
             List<Usuario> resultado = [];
-            IDbConnection connection = new SqliteConnection(_connection.SQLiteConnection);
+            using var connection = new SqliteConnection(_connection.SQLiteConnection);
             connection.Open();
 
             try
             {
+                connection.Open();
 
+                string sql = @" SELECT 
+                                    u.Id, u.Login, u.Senha, u.Nome, u.Email, u.Telefone, u.Roles_Id 
+                                FROM tb_Usuarios AS u 
+                                WHERE 1 = 1 
+                                ORDER BY 1 DESC
+                                LIMIT 1000; 
+                            ";
 
+                SqliteCommand command = new(sql, connection);
+
+                using var reader = command.ExecuteReader();
+
+                if (!reader.HasRows)
+                {
+                    return null;
+                }
+
+                while (reader.Read())
+                {
+                    Usuario usuario = new()
+                    {
+                        Id = reader.GetInt32(0),
+                        Login = reader.GetString(1),
+                        Senha = reader.GetString(2),
+                        Nome = reader.GetString(3),
+                        Email = reader.GetString(4),
+                        Role_Id = reader.GetString(6)
+                    };
+
+                    if (!reader.IsDBNull(5))
+                    {
+                        usuario.Telefone = reader.GetString(5);
+                    }
+
+                    resultado.Add(usuario);
+                }
             }
             catch (Exception ex)
             {
@@ -113,7 +149,9 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 using var reader = command.ExecuteReader();
 
                 if (!reader.HasRows)
+                {
                     return null;
+                }
 
                 while (reader.Read())
                 {
@@ -125,7 +163,9 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                     resultado.Role_Id = reader.GetString(6);
 
                     if (!reader.IsDBNull(5))
+                    {
                         resultado.Telefone = reader.GetString(5);
+                    }
                 }
             }
             catch (Exception ex)
@@ -138,6 +178,7 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 if (connection.State == ConnectionState.Open)
                     connection.Close();
             }
+
             return resultado;
         }
 
@@ -161,6 +202,7 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 if (connection.State == ConnectionState.Open)
                     connection.Close();
             }
+
             return true;
         }
 
@@ -184,6 +226,7 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 if (connection.State == ConnectionState.Open)
                     connection.Close();
             }
+
             return 1;
         }
 
@@ -207,6 +250,7 @@ namespace ControleRemessaModelo.Repositorio.Repositorios
                 if (connection.State == ConnectionState.Open)
                     connection.Close();
             }
+
             return 1;
         }
     }

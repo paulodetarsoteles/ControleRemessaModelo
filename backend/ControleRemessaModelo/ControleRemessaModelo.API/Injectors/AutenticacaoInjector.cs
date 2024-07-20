@@ -6,7 +6,7 @@ namespace ControleRemessaModelo.API.Injectors
     {
         public static void Injector(WebApplicationBuilder builder)
         {
-            builder.Services.AddScoped<IAutenticacaoUsuarioJWT, AutenticacaoUsuarioJWT>();
+            builder.Services.AddScoped<AutenticacaoUsuarioJWT>();
         }
     }
 }
